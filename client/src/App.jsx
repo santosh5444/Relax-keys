@@ -4,7 +4,7 @@ import {
   Copy, Check, Plus, Trash2, RefreshCw, Loader2, Sparkles,
   Search, ExternalLink, Cpu, X, Zap, ChevronRight, BookmarkPlus,
   HelpCircle, Eye, EyeOff, Globe, Tag, ArrowRight, Lock, Laptop,
-  Smartphone, Share2
+  Smartphone, Share2, Code, Terminal
 } from 'lucide-react';
 import {
   generatePassphrase, computeVaultId, encryptPayload, decryptPayload
@@ -91,6 +91,64 @@ const AI_PROVIDERS_DIRECTORY = [
   }
 ];
 
+const getSnippets = (provider, rawKey, maskKey = false) => {
+  const displayKey = maskKey
+    ? (rawKey && rawKey.length > 10 ? `${rawKey.slice(0, 7)}••••••••${rawKey.slice(-4)}` : 'YOUR_API_KEY')
+    : (rawKey || 'YOUR_API_KEY');
+
+  switch (provider) {
+    case 'openai':
+      return {
+        env: `OPENAI_API_KEY="${displayKey}"`,
+        python: `from openai import OpenAI\n\nclient = OpenAI(api_key="${displayKey}")\n\nresponse = client.chat.completions.create(\n    model="gpt-4o",\n    messages=[{"role": "user", "content": "Hello!"}]\n)\nprint(response.choices[0].message.content)`,
+        node: `import OpenAI from 'openai';\n\nconst openai = new OpenAI({ apiKey: '${displayKey}' });\n\nconst completion = await openai.chat.completions.create({\n  model: 'gpt-4o',\n  messages: [{ role: 'user', content: 'Hello!' }],\n});\nconsole.log(completion.choices[0].message.content);`,
+        curl: `curl https://api.openai.com/v1/chat/completions \\\n  -H "Content-Type: application/json" \\\n  -H "Authorization: Bearer ${displayKey}" \\\n  -d '{\n    "model": "gpt-4o",\n    "messages": [{"role": "user", "content": "Hello!"}]\n  }'`,
+        cursor: `// .cursor/settings.json or VSCode\n{\n  "cursor.openaiApiKey": "${displayKey}"\n}`
+      };
+    case 'anthropic':
+      return {
+        env: `ANTHROPIC_API_KEY="${displayKey}"`,
+        python: `import anthropic\n\nclient = anthropic.Anthropic(api_key="${displayKey}")\n\nmessage = client.messages.create(\n    model="claude-3-5-sonnet-20241022",\n    max_tokens=1024,\n    messages=[{"role": "user", "content": "Hello Claude!"}]\n)\nprint(message.content[0].text)`,
+        node: `import Anthropic from '@anthropic-ai/sdk';\n\nconst anthropic = new Anthropic({ apiKey: '${displayKey}' });\n\nconst message = await anthropic.messages.create({\n  model: 'claude-3-5-sonnet-20241022',\n  max_tokens: 1024,\n  messages: [{ role: 'user', content: 'Hello Claude!' }],\n});\nconsole.log(message.content[0].text);`,
+        curl: `curl https://api.anthropic.com/v1/messages \\\n  -H "x-api-key: ${displayKey}" \\\n  -H "anthropic-version: 2023-06-01" \\\n  -H "content-type: application/json" \\\n  -d '{\n    "model": "claude-3-5-sonnet-20241022",\n    "max_tokens": 1024,\n    "messages": [{"role": "user", "content": "Hello!"}]\n  }'`,
+        cursor: `// .cursor/settings.json or Claude Dev / Cline\n{\n  "anthropic.apiKey": "${displayKey}"\n}`
+      };
+    case 'groq':
+      return {
+        env: `GROQ_API_KEY="${displayKey}"`,
+        python: `from groq import Groq\n\nclient = Groq(api_key="${displayKey}")\n\nchat_completion = client.chat.completions.create(\n    messages=[{"role": "user", "content": "Explain quantum computing"}],\n    model="llama-3.3-70b-versatile",\n)\nprint(chat_completion.choices[0].message.content)`,
+        node: `import Groq from 'groq-sdk';\n\nconst groq = new Groq({ apiKey: '${displayKey}' });\n\nconst chatCompletion = await groq.chat.completions.create({\n  messages: [{ role: 'user', content: 'Hello Groq!' }],\n  model: 'llama-3.3-70b-versatile',\n});\nconsole.log(chatCompletion.choices[0].message.content);`,
+        curl: `curl https://api.groq.com/openai/v1/chat/completions \\\n  -H "Authorization: Bearer ${displayKey}" \\\n  -H "Content-Type: application/json" \\\n  -d '{\n    "messages": [{"role": "user", "content": "Hello!"}],\n    "model": "llama-3.3-70b-versatile"\n  }'`,
+        cursor: `// Cursor OpenAI Compatible or Continue.dev\n{\n  "models": [{\n    "title": "Groq LLaMA 3.3",\n    "provider": "openai",\n    "model": "llama-3.3-70b-versatile",\n    "apiKey": "${displayKey}",\n    "apiBase": "https://api.groq.com/openai/v1"\n  }]\n}`
+      };
+    case 'gemini':
+      return {
+        env: `GEMINI_API_KEY="${displayKey}"`,
+        python: `import google.generativeai as genai\n\ngenai.configure(api_key="${displayKey}")\nmodel = genai.GenerativeModel("gemini-2.0-flash")\nresponse = model.generate_content("Hello Gemini!")\nprint(response.text)`,
+        node: `import { GoogleGenerativeAI } from '@google/generative-ai';\n\nconst genAI = new GoogleGenerativeAI('${displayKey}');\nconst model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });\nconst result = await model.generateContent('Hello Gemini!');\nconsole.log(result.response.text());`,
+        curl: `curl "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${displayKey}" \\\n  -H "Content-Type: application/json" \\\n  -d '{\n    "contents": [{"parts":[{"text": "Hello!"}]}]\n  }'`,
+        cursor: `// Google AI Studio in Cursor / Continue.dev\n{\n  "models": [{\n    "title": "Gemini 2.0 Flash",\n    "provider": "gemini",\n    "model": "gemini-2.0-flash",\n    "apiKey": "${displayKey}"\n  }]\n}`
+      };
+    case 'deepseek':
+      return {
+        env: `DEEPSEEK_API_KEY="${displayKey}"`,
+        python: `from openai import OpenAI\n\nclient = OpenAI(\n    api_key="${displayKey}",\n    base_url="https://api.deepseek.com"\n)\n\nresponse = client.chat.completions.create(\n    model="deepseek-chat",\n    messages=[{"role": "user", "content": "Hello DeepSeek!"}]\n)\nprint(response.choices[0].message.content)`,
+        node: `import OpenAI from 'openai';\n\nconst openai = new OpenAI({\n  baseURL: 'https://api.deepseek.com',\n  apiKey: '${displayKey}',\n});\n\nconst completion = await openai.chat.completions.create({\n  model: 'deepseek-chat',\n  messages: [{ role: 'user', content: 'Hello DeepSeek!' }],\n});\nconsole.log(completion.choices[0].message.content);`,
+        curl: `curl https://api.deepseek.com/chat/completions \\\n  -H "Content-Type: application/json" \\\n  -H "Authorization: Bearer ${displayKey}" \\\n  -d '{\n    "model": "deepseek-chat",\n    "messages": [{"role": "user", "content": "Hello!"}]\n  }'`,
+        cursor: `// DeepSeek V3 in Cursor / Continue.dev\n{\n  "models": [{\n    "title": "DeepSeek V3",\n    "provider": "openai",\n    "model": "deepseek-chat",\n    "apiKey": "${displayKey}",\n    "apiBase": "https://api.deepseek.com"\n  }]\n}`
+      };
+    case 'openrouter':
+    default:
+      return {
+        env: `OPENROUTER_API_KEY="${displayKey}"`,
+        python: `from openai import OpenAI\n\nclient = OpenAI(\n    base_url="https://openrouter.ai/api/v1",\n    api_key="${displayKey}",\n)\n\ncompletion = client.chat.completions.create(\n    model="meta-llama/llama-3.3-70b-instruct:free",\n    messages=[{"role": "user", "content": "Hello!"}]\n)\nprint(completion.choices[0].message.content)`,
+        node: `import OpenAI from 'openai';\n\nconst openai = new OpenAI({\n  baseURL: 'https://openrouter.ai/api/v1',\n  apiKey: '${displayKey}',\n});\n\nconst completion = await openai.chat.completions.create({\n  model: 'meta-llama/llama-3.3-70b-instruct:free',\n  messages: [{ role: 'user', content: 'Hello!' }],\n});\nconsole.log(completion.choices[0].message.content);`,
+        curl: `curl https://openrouter.ai/api/v1/chat/completions \\\n  -H "Authorization: Bearer ${displayKey}" \\\n  -H "Content-Type: application/json" \\\n  -d '{\n    "model": "meta-llama/llama-3.3-70b-instruct:free",\n    "messages": [{"role": "user", "content": "Hello!"}]\n  }'`,
+        cursor: `// OpenRouter in Cursor / Continue.dev\n{\n  "models": [{\n    "title": "OpenRouter",\n    "provider": "openai",\n    "model": "auto",\n    "apiKey": "${displayKey}",\n    "apiBase": "https://openrouter.ai/api/v1"\n  }]\n}`
+      };
+  }
+};
+
 export default function App() {
   const [inputKey, setInputKey] = useState('');
   const [isInspecting, setIsInspecting] = useState(false);
@@ -102,6 +160,8 @@ export default function App() {
   const [copiedId, setCopiedId] = useState(null);
   const [notification, setNotification] = useState(null);
   const [selectedModelsModal, setSelectedModelsModal] = useState(null);
+  const [snippetLang, setSnippetLang] = useState('env');
+  const [maskSnippetKey, setMaskSnippetKey] = useState(false);
 
   // Zero-Knowledge Sync Modal State
   const [showSyncModal, setShowSyncModal] = useState(false);
@@ -342,6 +402,9 @@ export default function App() {
     return true;
   });
 
+  const snippets = report ? getSnippets(report.provider, report.rawKey, maskSnippetKey) : {};
+  const currentSnippet = snippets[snippetLang] || '';
+
   return (
     <div className="min-h-screen bg-[#07090e] text-slate-100 font-sans selection:bg-emerald-500/30 selection:text-emerald-200 pb-24">
       {/* Toast Notification */}
@@ -577,6 +640,82 @@ export default function App() {
                         )}
                       </button>
                     ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Ready-to-Use Code & IDE Snippets */}
+              {report.valid && (
+                <div className="space-y-3 pt-3 border-t border-[#1a2130]">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <span className="text-xs font-semibold text-white flex items-center gap-1.5">
+                      <Terminal className="w-3.5 h-3.5 text-emerald-400" />
+                      <span>Ready-to-Use Code & IDE Config</span>
+                    </span>
+
+                    <button
+                      onClick={() => setMaskSnippetKey(!maskSnippetKey)}
+                      className="text-[11px] text-slate-400 hover:text-slate-200 flex items-center gap-1 font-mono transition"
+                    >
+                      {maskSnippetKey ? (
+                        <>
+                          <EyeOff className="w-3 h-3 text-amber-400" />
+                          <span className="text-amber-400 font-medium">Masked (Safe for Screen)</span>
+                        </>
+                      ) : (
+                        <>
+                          <Eye className="w-3 h-3 text-emerald-400" />
+                          <span className="text-emerald-400 font-medium">Full Key (Ready to Paste)</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  {/* Tabs */}
+                  <div className="flex items-center space-x-1.5 bg-[#090c13] p-1 rounded-xl border border-[#171d2b] overflow-x-auto">
+                    {[
+                      { id: 'env', label: '.env' },
+                      { id: 'python', label: 'Python' },
+                      { id: 'node', label: 'Node.js' },
+                      { id: 'curl', label: 'cURL' },
+                      { id: 'cursor', label: 'Cursor / VS Code' }
+                    ].map(tab => (
+                      <button
+                        key={tab.id}
+                        onClick={() => setSnippetLang(tab.id)}
+                        className={`px-3 py-1 rounded-lg text-xs font-medium whitespace-nowrap transition ${
+                          snippetLang === tab.id
+                            ? 'bg-slate-800 text-emerald-400 font-bold border border-emerald-500/30 shadow-sm'
+                            : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        {tab.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Code Snippet Box */}
+                  <div className="relative group rounded-xl bg-[#080b11] border border-[#19202f] p-3.5">
+                    <pre className="font-mono text-xs text-emerald-300/90 whitespace-pre-wrap break-all leading-relaxed pr-24 select-all max-h-48 overflow-y-auto">
+                      {currentSnippet}
+                    </pre>
+
+                    <button
+                      onClick={() => copyText(currentSnippet, 'snippet')}
+                      className="absolute top-2.5 right-2.5 px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700/80 text-[11px] font-semibold transition flex items-center gap-1.5 shadow-md"
+                    >
+                      {copiedId === 'snippet' ? (
+                        <>
+                          <Check className="w-3 h-3 text-emerald-400" />
+                          <span className="text-emerald-400">Copied!</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-3 h-3 text-slate-400" />
+                          <span>Copy</span>
+                        </>
+                      )}
+                    </button>
                   </div>
                 </div>
               )}
