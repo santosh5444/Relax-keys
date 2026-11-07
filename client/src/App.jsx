@@ -420,15 +420,18 @@ export default function App() {
       )}
 
       {/* Top Navbar */}
-      <nav className="border-b border-[#151926] bg-[#0a0d14]/80 backdrop-blur sticky top-0 z-30 px-6 py-3.5">
+      <nav className="border-b border-[#151926] bg-[#0a0d14]/80 backdrop-blur sticky top-0 z-30 px-6 py-3">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shadow-sm shadow-emerald-500/10">
-              <Key className="w-4 h-4" />
+            <div className="w-9 h-9 rounded-xl bg-[#090d16] border border-emerald-500/30 flex items-center justify-center p-1 shadow-lg shadow-emerald-500/10 hover:border-emerald-400/60 transition group cursor-pointer">
+              <img src="/favicon.svg" alt="Relax Keys Logo" className="w-7 h-7 drop-shadow-[0_0_8px_rgba(16,185,129,0.5)] group-hover:scale-105 transition transform" />
             </div>
             <div>
-              <span className="font-bold text-sm tracking-tight text-white">Relax Keys</span>
-              <span className="text-[11px] text-slate-400 ml-2 hidden sm:inline">AI Key Inspector & Sync Vault</span>
+              <div className="flex items-center gap-1.5">
+                <span className="font-extrabold text-sm tracking-tight text-white">Relax Keys</span>
+                <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">v1.0</span>
+              </div>
+              <span className="text-[11px] text-slate-400 hidden sm:inline">AI Key Inspector & Sync Vault</span>
             </div>
           </div>
 
@@ -454,7 +457,13 @@ export default function App() {
       {/* Main Container */}
       <main className="max-w-5xl mx-auto px-6 pt-10 space-y-12">
         {/* Hero Section */}
-        <div className="text-center space-y-3 max-w-2xl mx-auto">
+        <div className="text-center space-y-3.5 max-w-2xl mx-auto">
+          <div className="flex justify-center mb-1">
+            <div className="relative group">
+              <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-emerald-500 to-cyan-500 opacity-25 blur-lg group-hover:opacity-40 transition"></div>
+              <img src="/favicon.svg" alt="Relax Keys Cyber Shield Logo" className="relative w-14 h-14 drop-shadow-[0_0_12px_rgba(16,185,129,0.4)] transform group-hover:scale-105 transition" />
+            </div>
+          </div>
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
             <Shield className="w-3.5 h-3.5" />
             <span>Zero-Knowledge • Immune to AI Cracking • No Logins</span>
