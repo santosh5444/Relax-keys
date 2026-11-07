@@ -1,0 +1,8 @@
+node_modules
+client/node_modules
+client/dist
+.env
+.DS_Store
+data/relaxkeys-store.json
+data/zero-knowledge-vaults.json
+*.log

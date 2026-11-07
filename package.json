@@ -1,0 +1,33 @@
+{
+  "name": "relaxkeys",
+  "version": "1.0.0",
+  "description": "Universal AI API Key Inspector & Zero-Knowledge Vault",
+  "main": "server/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "npm --prefix client install && npm --prefix client run build",
+    "start": "node server/index.js",
+    "server": "node server/index.js",
+    "client": "npm --prefix client run dev"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "keywords": [
+    "api-keys",
+    "inspector",
+    "rate-limits",
+    "openai",
+    "groq",
+    "anthropic",
+    "gemini",
+    "deepseek"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
+  }
+}
