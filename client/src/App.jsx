@@ -466,13 +466,13 @@ export default function App() {
           </div>
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
             <Shield className="w-3.5 h-3.5" />
-            <span>Zero-Knowledge • Immune to AI Cracking • No Logins</span>
+            <span>100% Private • Ephemeral In-Memory Check • No Logins Needed</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
             Inspect Any AI API Key
           </h1>
           <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
-            Paste any key to instantly check its live status, rate limits (RPM/TPM), credit balance, and authorized models.
+            Test any key in 0.5s. View remaining rate limits (RPM/TPM), live account balances, and authorized models without logging into five different dashboards.
           </p>
         </div>
 
@@ -482,7 +482,7 @@ export default function App() {
             <input
               type="text"
               autoFocus
-              placeholder="Paste key: sk-proj-..., gsk_..., sk-or-..., sk-ant-..., AIzaSy..."
+              placeholder="Paste any key (OpenAI, Groq, Claude, Gemini, DeepSeek, OpenRouter)..."
               value={inputKey}
               onChange={(e) => {
                 setInputKey(e.target.value);
@@ -567,29 +567,29 @@ export default function App() {
             <div className="p-5 space-y-5">
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div className="p-3 rounded-xl bg-[#090c13] border border-[#171d2b]">
-                  <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Health</span>
+                  <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Status</span>
                   <div className="mt-1 font-bold text-sm text-white capitalize">{report.status}</div>
-                  <p className="mt-0.5 text-[10px] text-slate-500">Live API response</p>
+                  <p className="mt-0.5 text-[10px] text-slate-500">Live endpoint response</p>
                 </div>
 
                 <div className="p-3 rounded-xl bg-[#090c13] border border-[#171d2b]">
-                  <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Rate Limit (RPM)</span>
+                  <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Speed (RPM)</span>
                   <div className="mt-1 font-bold text-sm text-white">{report.rpmLimit} <span className="text-xs font-normal text-slate-400">req/m</span></div>
-                  <p className="mt-0.5 text-[10px] text-slate-500">Max throughput</p>
+                  <p className="mt-0.5 text-[10px] text-slate-500">Allowed calls / minute</p>
                 </div>
 
                 <div className="p-3 rounded-xl bg-[#090c13] border border-[#171d2b]">
-                  <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Token Limit (TPM)</span>
+                  <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Capacity (TPM)</span>
                   <div className="mt-1 font-bold text-sm text-white">{report.tpmLimit.toLocaleString()}</div>
-                  <p className="mt-0.5 text-[10px] text-slate-500">Tokens per minute</p>
+                  <p className="mt-0.5 text-[10px] text-slate-500">Tokens / minute</p>
                 </div>
 
                 <div className="p-3 rounded-xl bg-[#090c13] border border-[#171d2b]">
-                  <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Balance / Quota</span>
+                  <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Available Credits</span>
                   <div className="mt-1 font-bold text-sm text-emerald-400 truncate">
                     {report.hasRealBalance ? `$${report.balance.toFixed(2)}` : report.quotaStatus}
                   </div>
-                  <p className="mt-0.5 text-[10px] text-slate-500">{report.hasRealBalance ? 'Exact live balance' : 'Billing state'}</p>
+                  <p className="mt-0.5 text-[10px] text-slate-500">{report.hasRealBalance ? 'Live account wallet' : 'Billing tier status'}</p>
                 </div>
               </div>
 
